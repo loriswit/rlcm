@@ -1,0 +1,142 @@
+﻿<Window x:Class="Rlcm.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="RL Challenge Manager"
+        WindowStartupLocation="CenterScreen"
+        Height="300"
+        Width="400"
+        ResizeMode="CanMinimize">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Width" Value="220" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Width" Value="120" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Width" Value="60" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid Name="NoChallenge" Grid.ZIndex="3" Visibility="Hidden">
+            <Grid.Background>
+                <SolidColorBrush Color="White" />
+            </Grid.Background>
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock HorizontalAlignment="Center" FontWeight="Bold">No challenge detected</TextBlock>
+                <CheckBox Name="InstallMod" Click="OnInstallMod" HorizontalAlignment="Center" Margin="0 40 0 0">
+                    Enable training room
+                </CheckBox>
+            </StackPanel>
+        </Grid>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="3*" />
+                <RowDefinition Height="3*" />
+                <RowDefinition Height="3*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Name="Level" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20">
+                Level Name
+            </TextBlock>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Name="Difficulty" Margin="0">
+                    difficulty
+                </TextBlock>
+                <TextBlock Name="Mode" Margin="60 0 0 0">
+                    mode
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock>Challenge: </TextBlock>
+                <ComboBox Name="Type" SelectionChanged="OnChangeType">
+                    <ComboBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="32" Height="32" Source="/Resources/Icons/get_there_quickly.png" />
+                            <TextBlock VerticalAlignment="Center" Text="Get there quickly!" />
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="32" Height="32" Source="/Resources/Icons/get_there_quickly.png" />
+                            <TextBlock VerticalAlignment="Center" Text="Grab them quickly!" />
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="32" Height="32" Source="/Resources/Icons/as_far_as_you_can.png" />
+                            <TextBlock VerticalAlignment="Center" Text="As far as you can!" />
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="32" Height="32" Source="/Resources/Icons/as_many_as_you_can.png" />
+                            <TextBlock VerticalAlignment="Center" Text="As many as you can!" />
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="32" Height="32" Source="/Resources/Icons/against_the_clock.png" />
+                            <TextBlock VerticalAlignment="Center" Text="Against the clock!" />
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="32" Height="32" Source="/Resources/Icons/grab_them_quickly.png" />
+                            <TextBlock VerticalAlignment="Center" Text="Grab them quickly!" />
+                        </StackPanel>
+                    </ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock>Seed: </TextBlock>
+                <TextBox Name="Seed" Width="110" FontFamily="Lucida Console" TextChanged="OnChangeSeed" />
+                <TextBlock Margin="30 0 0 0" FontSize="18">←</TextBlock>
+                <Button Name="Random" Click="OnRandomSeed">Random seed</Button>
+            </StackPanel>
+
+            <StackPanel Grid.Row="4" Orientation="Horizontal"
+                        Margin="0 0 0 20"
+                        VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock>Goal: </TextBlock>
+                <TextBox Name="Goal" TextChanged="OnChangeGoal" />
+                <TextBlock Name="GoalUnit">unit</TextBlock>
+                <TextBlock Margin="20 0 5 0">Limit: </TextBlock>
+                <TextBox Name="Limit" TextChanged="OnChangeLimit" />
+                <TextBlock Name="LimitUnit">unit</TextBlock>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
