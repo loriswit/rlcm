@@ -95,18 +95,24 @@ namespace Rlcm.Game
 
         private void Locate()
         {
-            var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+            var views = new[] {RegistryView.Registry64, RegistryView.Registry32};
+            foreach (var view in views)
+            {
+                var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view);
+                var key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
 
-            var path = (from subKey in key?.GetSubKeyNames()
-                select key?.OpenSubKey(subKey)
-                into program
-                where (string) program?.GetValue("DisplayName") == "Rayman Legends"
-                select (string) program.GetValue("InstallLocation")).FirstOrDefault();
+                var path = (from subKey in key?.GetSubKeyNames()
+                    select key?.OpenSubKey(subKey)
+                    into program
+                    where (string) program?.GetValue("DisplayName") == "Rayman Legends"
+                    select (string) program.GetValue("InstallLocation")).FirstOrDefault();
 
-            if (path == null)
+                if (path == null)
+                    continue;
+
+                SetLocation(path);
                 return;
-
-            SetLocation(path);
+            }
         }
 
         private static void FindAssetsOffsets(Stream file, ref Dictionary<string, long> assets)
