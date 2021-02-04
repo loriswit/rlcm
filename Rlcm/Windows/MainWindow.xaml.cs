@@ -12,7 +12,7 @@ namespace Rlcm.Windows
     public partial class MainWindow
     {
         private readonly Challenge _challenge;
-        private readonly Bundle _bundle;
+        private readonly TrainingRoom _trainingRoom;
         private readonly Memory _memory;
 
         private readonly Stopwatch _updateDelay;
@@ -24,15 +24,15 @@ namespace Rlcm.Windows
         {
             _memory = new Memory();
             _challenge = new Challenge(_memory);
-            _bundle = new Bundle();
+            _trainingRoom = new TrainingRoom();
             _updateDelay = new Stopwatch();
 
             _memory.OnProcessOpened = process =>
             {
                 var filename = process.MainModule?.FileName;
                 var location = filename?.Substring(0, filename.LastIndexOf('\\'));
-                _bundle.SetLocation(location);
-                InstallMod.IsChecked = _bundle.IsModInstalled();
+                _trainingRoom.SetGameLocation(location);
+                InstallMod.IsChecked = _trainingRoom.IsModInstalled();
             };
 
             InitializeComponent();
@@ -41,7 +41,7 @@ namespace Rlcm.Windows
 
         protected override void OnSourceInitialized(EventArgs e)
         {
-            InstallMod.IsChecked = _bundle.IsModInstalled();
+            InstallMod.IsChecked = _trainingRoom.IsModInstalled();
             _memory.Load();
 
             var timer = new DispatcherTimer();
@@ -243,7 +243,7 @@ namespace Rlcm.Windows
         private void OnInstallMod(object sender, EventArgs args)
         {
             var install = InstallMod.IsChecked == true;
-            if (_bundle.NotFound())
+            if (_trainingRoom.GameNotFound())
             {
                 InstallMod.IsChecked = !install;
                 MessageBox.Show("Cannot find the game's installation folder. Please start the game first.",
@@ -254,12 +254,19 @@ namespace Rlcm.Windows
 
             try
             {
-                _bundle.InstallTrainingMod(install);
+                if (install)
+                    _trainingRoom.InstallMod();
+                else
+                    _trainingRoom.UninstallMod();
+                
+                if(_memory.Load())
+                    MessageBox.Show("You need to restart the game to apply the changes.",
+                        "Game restart required", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (IOException e)
             {
                 InstallMod.IsChecked = !install;
-                MessageBox.Show(e.Message, "Cannot open bundle", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(e.Message, "An error occurred", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

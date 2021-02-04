@@ -20,5 +20,11 @@ namespace Rlcm.Util
             key = key?.CreateSubKey(Company)?.CreateSubKey(AppName);
             key?.SetValue(name, value);
         }
+
+        public static void DeleteValue(string name)
+        {
+            var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\" + Company + "\\" + AppName, true);
+            key?.DeleteValue(name);
+        }
     }
 }
