@@ -1,0 +1,20 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: microsoft/setup-msbuild@v1
+    - run: msbuild -p:Configuration=Release
+    - uses: actions/upload-artifact@v2
+      with:
+        name: rlcm.exe
+        path: Rlcm/bin/Release/rlcm.exe
