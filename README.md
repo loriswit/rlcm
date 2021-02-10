@@ -9,7 +9,7 @@ RLCM is a small application which includes multiple features related to Rayman L
 
 ## Usage
 
-Launch RLCM and install the training room mod. Then, launch the game and jump into the "training" painting. You can then jump into any challenge and select a level generator from the list (this will define the difficulty and the default mode). Note that for some reason, the Murphy painting doesn't work, making this challenge unavailable.
+Launch RLCM and install the training room mod. Then, launch the game and jump into the "training" painting. You can then jump into any challenge and select a level generator from the list (this will define the difficulty and the default mode).
 
 Once the challenge is started, RLCM will display various kinds of information about the current challenge, most of which can be edited. The change of any property takes effect immediately, except for the seed which requires the challenge to be restarted.
 
