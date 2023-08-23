@@ -134,7 +134,8 @@ namespace Rlcm.Game
                 var path = (from subKey in key?.GetSubKeyNames()
                     select key?.OpenSubKey(subKey)
                     into program
-                    where (string) program?.GetValue("DisplayName") == "Rayman Legends"
+                    where (string) program?.GetValue("DisplayName") == "Rayman Legends" &&
+                          !string.IsNullOrEmpty((string) program.GetValue("InstallLocation"))
                     select (string) program.GetValue("InstallLocation")).FirstOrDefault();
 
                 if (path == null)
