@@ -16,6 +16,11 @@ namespace Rlcm.Game
         public TrainingRoom()
         {
             _location = Settings.GetValue("GameLocation");
+
+            // check that the location still exists
+            if (!Directory.Exists(_location))
+                _location = null;
+
             if (GameNotFound())
                 LocateGame();
         }
@@ -131,17 +136,19 @@ namespace Rlcm.Game
                 var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view);
                 var key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
 
-                var path = (from subKey in key?.GetSubKeyNames()
+                var installPath = (from subKey in key?.GetSubKeyNames()
                     select key?.OpenSubKey(subKey)
                     into program
-                    where (string) program?.GetValue("DisplayName") == "Rayman Legends" &&
-                          !string.IsNullOrEmpty((string) program.GetValue("InstallLocation"))
-                    select (string) program.GetValue("InstallLocation")).FirstOrDefault();
+                    where (string) program?.GetValue("DisplayName") == "Rayman Legends"
+                    select (string) program.GetValue("InstallLocation")
+                    into path
+                    where !string.IsNullOrEmpty(path) && Directory.Exists(path)
+                    select path).FirstOrDefault();
 
-                if (path == null)
+                if (installPath == null)
                     continue;
 
-                SetGameLocation(path);
+                SetGameLocation(installPath);
                 return;
             }
         }

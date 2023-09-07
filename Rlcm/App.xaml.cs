@@ -13,8 +13,8 @@ namespace Rlcm
 
         private void AppStartup(object sender, StartupEventArgs startupEventArgs)
         {
-            Version.Number = 311;
-            Version.Name = "3.1.1";
+            Version.Number = 312;
+            Version.Name = "3.1.2";
 
             var args = Environment.GetCommandLineArgs();
             if (args.Contains("--updated") || args.Contains("-u"))
