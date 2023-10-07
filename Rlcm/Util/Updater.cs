@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows;
+using Rlcm.Game;
 using Rlcm.Windows;
 
 namespace Rlcm.Util
@@ -74,7 +75,24 @@ namespace Rlcm.Util
                     Thread.Sleep(500);
                 }
 
-            MessageBox.Show("Successfully updated to version " + App.Version.Name,
+            // if the old patch is installed, update it
+            var patchUpdated = false;
+            var trainingRoom = new TrainingRoom();
+            if (trainingRoom.CheckPatch(new byte[]
+                {
+                    0x86, 0xa, 0xb4, 0xcc, 0xf1, 0x9f, 0x94, 0xf1,
+                    0xe7, 0xb8, 0xe7, 0xf3, 0x6b, 0x72, 0x82, 0x7e
+                }))
+            {
+                trainingRoom.UninstallMod(skipWarning: true, skipRestore: true);
+                trainingRoom.InstallMod(skipWarning: true);
+                patchUpdated = true;
+            }
+
+            MessageBox.Show("Successfully updated to version " + App.Version.Name +
+                            (patchUpdated ? "\n\nThe training room mod has been automatically updated." : "") +
+                            "\n\nWhat's new?\n" +
+                            "• The challenge menus are now displayed correctly in the training room.",
                 "RLCM Updated", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }

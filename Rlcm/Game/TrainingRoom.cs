@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -42,16 +43,17 @@ namespace Rlcm.Game
             Settings.SetValue("GameLocation", _location);
         }
 
-        public void InstallMod()
+        public void InstallMod(bool skipWarning = false)
         {
             var patchFilename = _location + PatchName;
             if (File.Exists(patchFilename))
             {
-                MessageBox.Show(
-                    "There is already a patch in the game folder.\n\n"
-                    + "Installing the training room will replace the existing patch, "
-                    + "which will be restored when uninstalling the training room.",
-                    "Existing patch found", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (!skipWarning)
+                    MessageBox.Show(
+                        "There is already a patch in the game folder.\n\n"
+                        + "Installing the training room will replace the existing patch, "
+                        + "which will be restored when uninstalling the training room.",
+                        "Existing patch found", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 var uuid = Guid.NewGuid();
                 File.Move(patchFilename, _location + uuid + ".ipk");
@@ -64,30 +66,33 @@ namespace Rlcm.Game
             new BinaryWriter(file).Write(modData);
         }
 
-        public void UninstallMod()
+        public void UninstallMod(bool skipWarning = false, bool skipRestore = false)
         {
             var patchFilename = _location + PatchName;
             File.Delete(patchFilename);
 
             // restore the previous saved patch, if any
-            var uuid = Settings.GetValue("PreviousPatch");
-            if (uuid != null)
+            if (!skipRestore)
             {
-                try
+                var uuid = Settings.GetValue("PreviousPatch");
+                if (uuid != null)
                 {
-                    File.Move(_location + uuid + ".ipk", patchFilename);
-                }
-                catch (IOException e)
-                {
-                    MessageBox.Show(e.Message, "Failed to restore previous patch",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                    try
+                    {
+                        File.Move(_location + uuid + ".ipk", patchFilename);
+                    }
+                    catch (IOException e)
+                    {
+                        MessageBox.Show(e.Message, "Failed to restore previous patch",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
 
-                Settings.DeleteValue("PreviousPatch");
+                    Settings.DeleteValue("PreviousPatch");
+                }
             }
 
             // show warning only once
-            if (Settings.GetValue("UninstallWarning") == null)
+            if (!skipWarning && Settings.GetValue("UninstallWarning") == null)
             {
                 MessageBox.Show(
                     "If you installed the mod with a previous version of RLCM, "
@@ -102,16 +107,19 @@ namespace Rlcm.Game
 
         public bool IsModInstalled()
         {
+            return CheckPatch(new byte[]
+            {
+                0x25, 0xc6, 0x2f, 0x1f, 0x93, 0x8b, 0x61, 0xc3,
+                0x91, 0x57, 0x68, 0xe1, 0x25, 0x5d, 0x7b, 0x17
+            });
+        }
+
+        public bool CheckPatch(IEnumerable<byte> checksum)
+        {
             var patchFilename = _location + PatchName;
 
             if (GameNotFound() || !File.Exists(patchFilename))
                 return false;
-
-            byte[] checksum =
-            {
-                0x86, 0xa, 0xb4, 0xcc, 0xf1, 0x9f, 0x94, 0xf1,
-                0xe7, 0xb8, 0xe7, 0xf3, 0x6b, 0x72, 0x82, 0x7e
-            };
 
             using var file = File.OpenRead(patchFilename);
             var hash = MD5.Create().ComputeHash(file);
